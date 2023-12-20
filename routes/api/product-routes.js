@@ -149,8 +149,26 @@ router.put("/:id", (req, res) => {
     });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   // delete one product by its `id` value
+  try {
+    const productData = await Product.destroy({
+      where: {
+        id: req.params.id,
+      },
+    });
+
+    if (!productData) {
+      res
+        .status(404)
+        .json({ message: "Couldn't find the product you are looking for!" });
+      return;
+    }
+
+    res.status(200).json({ message: "The product was deleted successfully!" });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 
 module.exports = router;
